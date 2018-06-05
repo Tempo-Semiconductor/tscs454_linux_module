@@ -1,0 +1,9 @@
+sound/soc/bcm/.tmp_versions/
+sound/soc/codecs/.tmp_versions/
+*.dtbo
+*.cmd
+*.ko
+*.mod.*
+*symvers
+*.order
+*.o

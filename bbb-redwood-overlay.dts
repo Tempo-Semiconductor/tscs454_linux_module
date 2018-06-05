@@ -1,0 +1,155 @@
+// Definitions for the Tempo Semiconductor tscs454 audio codec
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/pinctrl/am33xx.h>
+
+/ {
+	compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+	fragment@0 {
+		target = <&am33xx_pinmux>;
+		__overlay__ {
+			mcasp0_pins: mcasp0_pins {
+				pinctrl-single,pins = <
+					/* mcasp0_aclkx.mcasp0_aclkx (BCLK) A13,P9.31 */
+					AM33XX_IOPAD(0x990, PIN_INPUT_PULLDOWN | MUX_MODE0)
+					/* mcasp0_fsx.mcasp0_fsx (LRCLK) B13,P9.29 */
+					AM33XX_IOPAD(0x994, PIN_INPUT_PULLDOWN | MUX_MODE0)
+					/* mcasp0_ahclkr.mcasp0_axr2 (TX Data) C12,P9.28 */
+					AM33XX_IOPAD(0x99c, PIN_OUTPUT_PULLDOWN | MUX_MODE2)
+					/* mcasp0_axr0.mcasp0_axr0 (RX Data) D12,P9.30 */
+					AM33XX_IOPAD(0x998, PIN_INPUT_PULLDOWN | MUX_MODE0)>;
+			};
+			
+			mcasp1_pins: mcasp1_pins {
+				pinctrl-single,pins = <
+					/* mcasp0_aclkr.mcasp1_aclkx (BCLK) B12,P9.42 */
+					AM33XX_IOPAD(0x9a0, PIN_INPUT | MUX_MODE3)
+					/* mcasp0_fsr.mcasp1_fsx (LRCLK)  C13,P9.27 */
+					AM33XX_IOPAD(0x9a4, PIN_INPUT | MUX_MODE3)
+					/* mcasp0_ahclkx.mcasp1_axr1 (TX Data) A14,P9.25  */
+					AM33XX_IOPAD(0x9ac, PIN_OUTPUT_PULLDOWN | MUX_MODE3)>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&mcasp0>;
+		__overlay__ {
+			#sound-dai-cells = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&mcasp0_pins>;
+			status = "okay";
+			op-mode = <0>;	/* MCASP_IIS_MODE */
+			tdm-slots = <2>;
+			serial-dir = <2 0 1 0>; /* 0: INACTIVE, 1: TX, 2: RX */
+			tx-num-evt = <32>;
+			rx-num-evt = <32>;
+		};
+	};
+
+	fragment@2 {
+		target = <&mcasp1>;
+		__overlay__ {
+			#sound-dai-cells = <0>;
+			pinctrl-names = "default";
+			pinctrl-0 = <&mcasp1_pins>;
+			status = "okay";
+			op-mode = <0>;	/* MCASP_IIS_MODE */
+			tdm-slots = <2>;
+			serial-dir = <0 1 0 0>; /* 0: INACTIVE, 1: TX, 2: RX */
+			tx-num-evt = <32>;
+			rx-num-evt = <32>;
+		};
+	};
+
+	fragment@3 {
+		target = <&i2c2>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			redwood: codec@69 {
+				#sound-dai-cells = <1>;
+				compatible = "tempo,tscs454";
+				reg = <0x69>;
+				/* SCL P9.19 */
+				/* SDA P9.20 */
+				clock-names = "mclk1";
+				clocks = <&audio_xtal>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@4 {
+		target-path = "/";
+		__overlay__ {
+
+			audio_xtal: xtal {
+				#clock-cells = <0>;
+				compatible = "fixed-clock";
+				clock-frequency = <19200000>;
+				status = "okay";
+			};
+
+			sound {
+				compatible = "simple-audio-card";
+				simple-audio-card,name = "Simple Redwood Card";
+
+				simple-audio-card,dai-link@0 {
+					format = "i2s";
+					bitclock-master = <&dailink0_master>;
+					frame-master = <&dailink0_master>;
+					widgets =
+						"Headphone", "Headphone",
+						"Microphone", "Analog Mic",
+						"Line", "Line In 2",
+						"Line", "Line In 3",
+						"Microphone", "Digital Mic 1",
+						"Microphone", "Digital Mic 2";
+					routing = 
+						"Headphone", "Headphone Left",
+						"Headphone", "Headphone Right",
+						"Line In 1 Left", "Analog Mic",
+						"Line In 1 Right", "Analog Mic",
+						"Analog Mic", "Mic Bias 1",
+						"Line In 2 Left", "Line In 2",
+						"Line In 2 Right", "Line In 2",
+						"Line In 3 Left", "Line In 3",
+						"Line In 3 Right", "Line In 3",
+						"DMic 1", "Digital Mic 1",
+						"DMic 2", "Digital Mic 2";
+					cpu {
+						sound-dai = <&mcasp0>;
+					};
+					dailink0_master: codec {
+						sound-dai = <&redwood 0>;
+					};
+				};
+
+				simple-audio-card,dai-link@1 {
+					format = "i2s";
+					bitclock-master = <&dailink1_master>;
+					frame-master = <&dailink1_master>;
+					widgets =
+						"Speaker", "Speaker";
+					routing = 
+						"Speaker", "Speaker Left",
+						"Speaker", "Speaker Right";
+					cpu {
+						sound-dai = <&mcasp1>;
+					};
+					dailink1_master: codec {
+						sound-dai = <&redwood 1>;
+					};
+				};
+			};
+
+
+
+		};
+	};
+};

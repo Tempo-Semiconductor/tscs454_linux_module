@@ -1,0 +1,97 @@
+// Definitions for the Tempo Semiconductor tscs454 audio codec
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2708";
+
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			audio_xtal: xtal {
+				#clock-cells = <0>;
+				compatible = "fixed-clock";
+				clock-frequency = <19200000>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <&i2c1>;
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			redwood: codec@69 {
+				#sound-dai-cells = <0>;
+				compatible = "tempo,tscs454";
+				reg = <0x69>;
+				clock-names = "mclk1";
+				clocks = <&audio_xtal>;
+				status = "okay";
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <&i2s>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@3 {
+		target = <&sound>;
+		__overlay__ {
+			status = "okay";
+			compatible = "simple-audio-card";
+			simple-audio-card,name = "Simple Redwood Card";
+			simple-audio-card,widgets =
+				"Speaker", "Speaker",
+				"Headphone", "Headphone",
+				"Microphone", "Headset",
+				"Line", "Line In 2",
+				"Line", "Line In 3",
+				"Microphone", "Digital Mic 1",
+				"Microphone", "Digital Mic 2";
+			simple-audio-card,routing = 
+				"Speaker", "Speaker Left",
+				"Speaker", "Speaker Right",
+				"Headphone", "Headphone Left",
+				"Headphone", "Headphone Right",
+				"Line In 1 Left", "Headset",
+				"Line In 1 Right", "Headset",
+				"Headset", "Mic Bias 1",
+				"Headset", "GHS Detect Power",
+				"Line In 2 Left", "Line In 2",
+				"Line In 2 Right", "Line In 2",
+				"Line In 3 Left", "Line In 3",
+				"Line In 3 Right", "Line In 3",
+				"DMic 1", "Digital Mic 1",
+				"DMic 2", "Digital Mic 2";
+			simple-audio-card,dai-link@0 {
+				format = "i2s";
+				//format = "dsp_b";
+				//mclk-fs = <32>;
+				bitclock-master = <&dailink0_master>;
+				frame-master = <&dailink0_master>;
+				cpu {
+					sound-dai = <&i2s>;
+					//dai-tdm-slot-num = <2>;
+					//dai-tdm-slot-width = <32>;
+					//dai-tdm-slot-tx-mask = <1 1>;
+					//dai-tdm-slot-rx-mask = <1 1>;
+				};
+				dailink0_master: codec {
+					sound-dai = <&redwood>;
+					//dai-tdm-slot-num = <2>;
+					//dai-tdm-slot-width = <32>;
+					//dai-tdm-slot-tx-mask = <1 1>;
+					//dai-tdm-slot-rx-mask = <1 1>;
+				};
+			};
+		};
+	};
+};

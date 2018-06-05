@@ -1,0 +1,112 @@
+TSCS454 (Redwood) CODEC Configuration:
+
+Prequisites:
+
+    1. TSCS454 CODEC properly interfaced to an SOC of your choice
+    2. Linux Kernel with the TSCS454 Kernel module
+    3. Device Tree description as described in the binding
+    4. amixer
+
+Terminology:
+
+    Required - Denotes a control that must be set for proper operation
+
+    Depends  - Denotes a control that depends on another control about whether
+                   its configuration is needed.
+
+Configurations:
+
+    This section will demonstrate how to enable various paths on the TSCS454
+    CODEC. Each path is enabled with a set of amixer commands that execute in
+    series. You can combine these command sets in to one script file that
+    achieves your desired configuration.
+
+    Note: Not all paths can be combined.
+
+    Internal Rate (Required):
+
+        Options: '44.1kHz', '48kHz'
+
+        Example: amixer set 'Internal Rate' '48kHz'
+
+        Note: This control works in conjunction with the 'Internal Rate
+        Multiple' control to generate the CODEC's internal sampling rate. Once
+        the CODEC's internal sample rate is configured any interface that is
+        opened must be opened at the internal rate or use the asynchronous
+        sample rate converter (ASRC). There is only one, so this configuration
+        needs to be chosen carefully to meet your requirements.
+
+    Internal Rate Multiple (Required):
+
+        Options: '0.25x', '0.5x', '1.0x', '2.0x'
+
+        Example:
+
+            amixer set 'Internal Rate Multiple' '2.0x'
+
+        Note: This control works in conjunction with the 'Internal Rate' control
+        to generate the CODEC's internal sampling rate. Once the CODEC's
+        internal sample rate is configured any interface that is opened must be
+        opened at the internal rate or use the asynchronous sample rate
+        converter (ASRC). There is only one, so this configuration needs to be
+        chosen carefully to meet your requirements.
+
+    ASRC In / ASRC Out (Depends):
+
+        If an interface is needed at a particular sample rate that differs from
+        the internal rate of the CODEC, then you will need to assign the ASRC to
+        that interface. There is one for playback and one for capture. The
+        following example assigns an ASRC to the playback and capture paths of
+        DAI 2.
+
+        Options: 'None', 'DAI 1', 'DAI 2', 'DAI 3'
+
+        Example:
+
+            amixer set 'ASRC In' 'DAI 2' 
+            amixer set 'ASRC Out' 'DAI 2'
+
+    Headphone Playback:
+
+        This example will configure the following path:
+
+        DAI 2 ---> Headphone  
+
+        amixer set 'DAC Mux' 'CH 2_3'
+        amixer set 'Headphone' '50%'
+        amixer set 'DAC Mute' 'off'
+        
+    Speaker Playback:
+
+        This example will configure the following path:
+
+        DAI 1 ---> Speaker
+
+        amixer set 'Speaker Mux' 'CH 0_1'
+        amixer set 'Speaker' '50%'
+        amixer set 'Speaker Mute' 'off'
+        
+    Analog Capture:
+
+        This example will configure the following path:
+
+        Line in 1 ---> Input Boost [20dB] ---> DAI 3 Out
+
+        amixer set 'Input Boost Channel 0 Mux' 'Input 1'
+        amixer set 'Input Boost Channel 1 Mux' 'Input 1'
+        amixer set 'Input Boost Channel 0' '20dB'
+        amixer set 'Input Boost Channel 1' '20dB'
+        amixer set 'ADC Channel 0 Mux' 'Input Boost'
+        amixer set 'ADC Channel 1 Mux' 'Input Boost'
+        amixer set 'Input Processor Channel 0 Mux' 'ADC'
+        amixer set 'Input Processor Channel 1 Mux' 'ADC'
+        amixer set 'Input Channel 0 Mute Switch' 'off'
+        amixer set 'Input Channel 1 Mute Switch' 'off'
+        amixer set 'Input Channel 0' '100%'
+        amixer set 'Input Channel 1' '100%'
+        amixer set 'Input Channel 0 PGA Mute' 'off'
+        amixer set 'Input Channel 1 PGA Mute' 'off'
+        amixer set 'Input Channel 0 PGA' '0%'
+        amixer set 'Input Channel 1 PGA' '0%'
+        amixer set 'DAI 3 Out Mux' 'ADC/DMic 1'
+
