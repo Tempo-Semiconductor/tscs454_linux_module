@@ -1,0 +1,20 @@
+TSCS454 (Redwood) CODEC System Configuration:
+
+Considerations:
+
+    Internal rate, interface rate, and asyncronouse sample rate converter (ASRC)
+
+    Before integrating the TSCS454 CODEC in your system you should consider
+    what the sample rate requirements of your application are. The CODEC can
+    support a wide range of sample rates, but the integrator will need to choose
+    what the internal rate of the CODEC should be. Once this is chosen the
+    interfaces on the CODEC will only work correctly if their rate matches that
+    of the internal rate unless the ASRC is assigned to that interface. There is
+    only one ASRC, so careful planning is required to choose which interace will
+    use the ASRC. All other interfaces will need to match the internal rate.
+
+    If an application needs to dynamically assign the ASRC to different
+    interfaces this is possible by changing the mixer setting for the ASRC In or
+    ASRC Out depending on the direction of the stream.
+
+    NOTE: For more information on assigning the ASRC see codec_configuration.txt
