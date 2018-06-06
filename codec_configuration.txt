@@ -14,6 +14,23 @@ Terminology:
     Depends  - Denotes a control that depends on another control about whether
                    its configuration is needed.
 
+Tips:
+
+    Save configuration
+    
+        Once the mixer settings are set appropriately for your application you
+        can use the following command to save the state.
+
+            alsactl store
+
+        This will store the state of the mixer controls to a file with the
+        following path.
+
+            /etc/asound.state
+
+        For a production system you should generate this file for the rootfs
+        image that will be copied to each device.
+
 Configurations:
 
     This section will demonstrate how to enable various paths on the TSCS454
