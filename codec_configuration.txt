@@ -127,3 +127,31 @@ Configurations:
         amixer set 'Input Channel 1 PGA' '0%'
         amixer set 'DAI 3 Out Mux' 'ADC/DMic 1'
 
+    Headset with auto detect:
+
+        This example will configure the following path:
+
+        Line in 1 ---> Input Boost [20dB] ---> DAI 1 Out
+
+	amixer set 'Manual Mic Bias' 'off'
+	amixer set 'Headphone Detection' 'on'
+	amixer set 'Headset OMTP/CTIA' 'on'
+	amixer set 'Ring/Sleeve Auto' 'on'
+        amixer set 'Input Boost Channel 0 Mux' 'Input 1'
+        amixer set 'Input Boost Channel 1 Mux' 'Input 1'
+        amixer set 'Input Boost Channel 0' '20dB'
+        amixer set 'Input Boost Channel 1' '20dB'
+        amixer set 'ADC Channel 0 Mux' 'Input Boost'
+        amixer set 'ADC Channel 1 Mux' 'Input Boost'
+        amixer set 'Input Processor Channel 0 Mux' 'ADC'
+        amixer set 'Input Processor Channel 1 Mux' 'ADC'
+        amixer set 'Input Channel 0 Mute Switch' 'off'
+        amixer set 'Input Channel 1 Mute Switch' 'off'
+        amixer set 'Input Channel 0' '100%'
+        amixer set 'Input Channel 1' '100%'
+        amixer set 'Input Channel 0 PGA Mute' 'off'
+        amixer set 'Input Channel 1 PGA Mute' 'off'
+        amixer set 'Input Channel 0 PGA' '0%'
+        amixer set 'Input Channel 1 PGA' '0%'
+        amixer set 'DAI 1 Out Mux' 'ADC/DMic 1'
+
