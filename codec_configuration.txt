@@ -31,6 +31,51 @@ Tips:
         For a production system you should generate this file for the rootfs
         image that will be copied to each device.
 
+Internal Path Considerations:
+
+	Internally the TSCS454 CODEC has audio data paths that transfer multi
+	channel audio. There are a maximum of 6 channels of audio. Depending on
+	how the CODEC is configured different sources will source the data for
+	each of the 6 channels. Channels are grouped into the following pairs:
+
+		CH 1_2
+		CH 3_4
+		CH 5_6
+
+	Examples:
+
+		All interfaces are configured for I2S:
+
+			DAI 1 ==> CH 1_2
+			DAI 2 ==> CH 3_4
+			DAI 3 ==> CH 5_6
+
+		DAI 1 configured for TDM with 2 slots and DAI 2 & 3 configured
+		for I2S:
+
+			DAI 1 (TDM Slot 1 & 2) ==> CH 1_2
+			DAI 2 ==> CH 3_4
+			DAI 3 ==> CH 5_6
+
+		DAI 1 configured for TDM with 4 slots and DAI 3 configured for
+		I2S:
+
+			DAI 1 (TDM Slot 1 & 2) ==> CH 1_2
+			DAI 1 (TDM Slot 3 & 4) ==> CH 3_4 
+			DAI 3 ==> CH 5_6
+
+		DAI 1 configured for TDM with 6 slots:
+
+			DAI 1 (TDM Slot 1 & 2) ==> CH 1_2
+			DAI 1 (TDM Slot 3 & 4) ==> CH 3_4 
+			DAI 1 (TDM Slot 5 & 6) ==> CH 5_6 
+
+	Note: The TSCS454 also provides PCM interfacing on DAI 2 & 3. This is a
+	subset of TDM with two channels, so the driver treats PCM configurations
+	like TDM with 2 slots. In the above examples if an interface was
+	configured for PCM (i.e. 2 slot TDM) it would behave similarly to an
+	I2S configuration.
+
 Configurations:
 
     This section will demonstrate how to enable various paths on the TSCS454
@@ -137,21 +182,21 @@ Configurations:
 	amixer set 'Headphone Detection' 'on'
 	amixer set 'Headset OMTP/CTIA' 'on'
 	amixer set 'Ring/Sleeve Auto' 'on'
-        amixer set 'Input Boost Channel 0 Mux' 'Input 1'
-        amixer set 'Input Boost Channel 1 Mux' 'Input 1'
-        amixer set 'Input Boost Channel 0' '20dB'
-        amixer set 'Input Boost Channel 1' '20dB'
-        amixer set 'ADC Channel 0 Mux' 'Input Boost'
-        amixer set 'ADC Channel 1 Mux' 'Input Boost'
-        amixer set 'Input Processor Channel 0 Mux' 'ADC'
-        amixer set 'Input Processor Channel 1 Mux' 'ADC'
-        amixer set 'Input Channel 0 Mute Switch' 'off'
-        amixer set 'Input Channel 1 Mute Switch' 'off'
-        amixer set 'Input Channel 0' '100%'
-        amixer set 'Input Channel 1' '100%'
-        amixer set 'Input Channel 0 PGA Mute' 'off'
-        amixer set 'Input Channel 1 PGA Mute' 'off'
-        amixer set 'Input Channel 0 PGA' '0%'
-        amixer set 'Input Channel 1 PGA' '0%'
-        amixer set 'DAI 1 Out Mux' 'ADC/DMic 1'
+	amixer set 'Input Boost Channel 0 Mux' 'Input 1'
+	amixer set 'Input Boost Channel 1 Mux' 'Input 1'
+	amixer set 'Input Boost Channel 0' '20dB'
+	amixer set 'Input Boost Channel 1' '20dB'
+	amixer set 'ADC Channel 0 Mux' 'Input Boost'
+	amixer set 'ADC Channel 1 Mux' 'Input Boost'
+	amixer set 'Input Processor Channel 0 Mux' 'ADC'
+	amixer set 'Input Processor Channel 1 Mux' 'ADC'
+	amixer set 'Input Channel 0 Mute Switch' 'off'
+	amixer set 'Input Channel 1 Mute Switch' 'off'
+	amixer set 'Input Channel 0' '100%'
+	amixer set 'Input Channel 1' '100%'
+	amixer set 'Input Channel 0 PGA Mute' 'off'
+	amixer set 'Input Channel 1 PGA Mute' 'off'
+	amixer set 'Input Channel 0 PGA' '0%'
+	amixer set 'Input Channel 1 PGA' '0%'
+	amixer set 'DAI 1 Out Mux' 'ADC/DMic 1'
 
