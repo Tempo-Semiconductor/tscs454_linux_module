@@ -3443,6 +3443,12 @@ static int tscs454_i2c_probe(struct i2c_client *i2c,
 	for (src = PLL_INPUT_XTAL; src < PLL_INPUT_BCLK; src++) {
 		tscs454->sysclk = devm_clk_get(&i2c->dev, src_names[src]);
 		if (!IS_ERR(tscs454->sysclk)) {
+			ret = clk_prepare_enable(tscs454->sysclk);
+			if (ret < 0) {
+				dev_err(&i2c->dev,
+					"Failed to enable sysclk (%d)\n", ret);
+				return ret;
+			}
 			break;
 		} else if (PTR_ERR(tscs454->sysclk) != -ENOENT) {
 			ret = PTR_ERR(tscs454->sysclk);
