@@ -1,8 +1,6 @@
 This repo provides the Linux driver for the TSCS454xx Audio CODEC.
 
-Kernel versions tested:
-
-4.9
+This driver was upstreamed to 4.18
 
 Raspberry Pi Module Build/Install Directions:
 
