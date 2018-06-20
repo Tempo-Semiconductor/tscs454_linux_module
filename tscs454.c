@@ -1205,6 +1205,13 @@ static DECLARE_TLV_DB_SCALE(hp_vol_tlv_arr, -8850, 75, 0);
 /* R_SPKVOLR PG 2 ADDR 0x0D */
 static DECLARE_TLV_DB_SCALE(spk_vol_tlv_arr, -7725, 75, 0);
 
+/* R_HPSW PG 2 ADDR 0x18 */
+static char const * const hpsw_txt[] = {
+	"Disabled", "Speaker", "Sub", "Speaker/Sub"};
+
+static struct soc_enum const hpsw_enum =
+	SOC_ENUM_SINGLE(R_HPSW, FB_HPSW_HPSWEN, ARRAY_SIZE(hpsw_txt), hpsw_txt);
+
 /* R_SPKEQFILT PG 3 ADDR 0x01 */
 static char const * const eq_txt[] = {
 	"Pre Scale",
@@ -1752,6 +1759,10 @@ static struct snd_kcontrol_new const tscs454_snd_controls[] = {
 	/* R_SUBVOL PG 2 ADDR 0x10 */
 	SOC_SINGLE_TLV("Sub Volume", R_SUBVOL,
 			FB_SUBVOL_SUBVOL, FM_SUBVOL_SUBVOL, 0, spk_vol_tlv_arr),
+	/* R_HPSW PG 2 ADDR 0x18 */
+	SOC_ENUM("Headphone Auto Switching", hpsw_enum),
+	SOC_SINGLE("Headphone Detect Polarity Toggle Switch",
+		       R_HPSW, FB_HPSW_HPSWPOL, 1, 0),
 	/* R_SPKEQFILT PG 3 ADDR 0x01 */
 	SOC_SINGLE("Speaker EQ 2 Switch",
 			R_SPKEQFILT, FB_SPKEQFILT_EQ2EN, 1, 0),
