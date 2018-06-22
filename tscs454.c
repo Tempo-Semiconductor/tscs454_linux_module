@@ -1207,7 +1207,7 @@ static DECLARE_TLV_DB_SCALE(spk_vol_tlv_arr, -7725, 75, 0);
 
 /* R_HPSW PG 2 ADDR 0x18 */
 static char const * const hpsw_txt[] = {
-	"Disabled", "Speaker", "Sub", "Speaker/Sub"};
+	"Disabled", "Speaker", "Sub/Earphone", "Speaker/Sub/Earphone"};
 
 static struct soc_enum const hpsw_enum =
 	SOC_ENUM_SINGLE(R_HPSW, FB_HPSW_HPSWEN, ARRAY_SIZE(hpsw_txt), hpsw_txt);
