@@ -46,11 +46,13 @@ struct pll {
 	struct mutex lock;
 };
 
-static inline void pll_init(struct pll *pll, int id)
-{
-	pll->id = id;
-	mutex_init(&pll->lock);
-}
+// Use preprocessor macro so the lock name info isn't lost during mutex_init().
+// Otherwise lock debugging will get confused.
+#define pll_init(pll, i)			\
+	do {					\
+		(pll)->id = (i);		\
+		mutex_init(&(pll)->lock);	\
+	} while(0)
 
 struct internal_rate {
 	struct pll *pll;
@@ -86,11 +88,13 @@ static inline void init_coeff_ram_cache(u8 *cache)
 		cache[((norm_addrs[i] + 1) * COEFF_SIZE) - 1] = 0x40;
 }
 
-static inline void coeff_ram_init(struct coeff_ram *ram)
-{
-	init_coeff_ram_cache(ram->cache);
-	mutex_init(&ram->lock);
-}
+// Use preprocessor macro so the lock name info isn't lost during mutex_init().
+// Otherwise lock debugging will get confused.
+#define coeff_ram_init(coeff_ram)				\
+	do {							\
+		init_coeff_ram_cache((coeff_ram)->cache);	\
+		mutex_init(&(coeff_ram)->lock);			\
+	} while(0)
 
 struct aifs_status {
 	u8 streams;
