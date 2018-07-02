@@ -61,6 +61,7 @@
 				"Speaker", "Speaker Right",
 				"Headphone", "Headphone Left",
 				"Headphone", "Headphone Right",
+				"Headphone", "GHS Detect Power",
 				"Line In 1 Left", "Headset",
 				"Line In 1 Right", "Headset",
 				"Headset", "Mic Bias 1",
