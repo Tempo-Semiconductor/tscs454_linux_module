@@ -2507,6 +2507,8 @@ static struct snd_soc_dapm_route const tscs454_intercon[] = {
 	/* PLLs */
 	{"PLLs", NULL, "PLL 1 Power", pll_connected},
 	{"PLLs", NULL, "PLL 2 Power", pll_connected},
+	/* Headset */
+	{"GHS Detect Power", NULL, "PLLs"},
 	/* Inputs */
 	{"DAI 3 In", NULL, "DAI 3 In Power"},
 	{"DAI 2 In", NULL, "DAI 2 In Power"},
