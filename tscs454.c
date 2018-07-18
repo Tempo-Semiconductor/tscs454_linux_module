@@ -100,7 +100,7 @@ struct aifs_status {
 	u8 streams;
 };
 
-static inline void set_aif_status_active(struct aifs_status *status,
+static inline void set_aif_stream_active(struct aifs_status *status,
 		int aif_id, bool playback)
 {
 	u8 mask = 0x01 << (aif_id * 2 + !playback);
@@ -108,7 +108,7 @@ static inline void set_aif_status_active(struct aifs_status *status,
 	status->streams |= mask;
 }
 
-static inline void set_aif_status_inactive(struct aifs_status *status,
+static inline void set_aif_stream_inactive(struct aifs_status *status,
 		int aif_id, bool playback)
 {
 	u8 mask = ~(0x01 << (aif_id * 2 + !playback));
@@ -124,6 +124,12 @@ static bool aifs_active(struct aifs_status *status)
 static bool aif_active(struct aifs_status *status, int aif_id)
 {
 	return (0x03 << aif_id * 2) & status->streams;
+}
+
+static bool aif_stream_active(struct aifs_status *status,
+		int aif_id, bool playback)
+{
+	return (0x01 << (aif_id * 2 + !playback)) & status->streams;
 }
 
 struct tscs454 {
@@ -823,7 +829,10 @@ static inline int aif_free(struct snd_soc_component *component,
 
 	dev_dbg(component->dev, "%s(): aif %d\n", __func__, aif->id);
 
-	set_aif_status_inactive(&tscs454->aifs_status, aif->id, playback);
+	if (!aif_stream_active(&tscs454->aifs_status, aif->id, playback))
+		goto exit;
+	
+	set_aif_stream_inactive(&tscs454->aifs_status, aif->id, playback);
 
 	dev_dbg(component->dev, "Set aif %d inactive. Streams status is 0x%x\n",
 		aif->id, tscs454->aifs_status.streams);
@@ -842,6 +851,7 @@ static inline int aif_free(struct snd_soc_component *component,
 		free_pll(tscs454->internal_rate.pll);
 	}
 
+exit:
 	mutex_unlock(&tscs454->aifs_status_lock);
 
 	return 0;
@@ -3259,7 +3269,7 @@ static int tscs454_hw_params(struct snd_pcm_substream *substream,
 		goto exit;
 	}
 
-	set_aif_status_active(&tscs454->aifs_status, aif->id,
+	set_aif_stream_active(&tscs454->aifs_status, aif->id,
 			substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
 
 	dev_dbg(component->dev, "Set aif %d active. Streams status is 0x%x\n",
