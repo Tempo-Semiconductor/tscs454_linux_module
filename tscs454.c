@@ -157,7 +157,7 @@ struct coeff_ram_ctl {
 	struct soc_bytes_ext bytes_ext;
 };
 
-static const struct reg_sequence tscs454_patch[] = {
+static const struct reg_default tscs454_patch[] = {
 	/* Assign ASRC out of the box so DAI 1 just works */
 	{ R_AUDIOMUX1, FV_ASRCIMUX_I2S1 | FV_I2S2MUX_I2S2 },
 	{ R_AUDIOMUX2, FV_ASRCOMUX_I2S1 | FV_DACMUX_I2S1 | FV_I2S3MUX_I2S3 },
