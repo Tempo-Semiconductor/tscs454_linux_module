@@ -4,7 +4,9 @@
 
 This repo provides the Linux driver for the TSCS454xx Audio CODEC.
 
-This driver was upstreamed to 4.18
+This driver was upstreamed to 4.18.
+
+NOTE: During testing on Raspberry Pi, Wandboard, and Beagle Bone Black, TDM was found to work differently. Please contact us if you need assistance with TDM.
 
 ### Raspberry Pi Module Build/Install Directions:
 
